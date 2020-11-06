@@ -1,0 +1,67 @@
+---
+title: "Flex Dashboard Example"
+author: "Helena Lindsay"
+date: "9/18/2020"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, echo=FALSE, warning=FALSE, include=TRUE}
+library(flexdashboard)
+library(plotly)
+library(DT)
+library(ggplot2)
+library(dplyr)
+load("graphic.RData")
+```
+
+Column {data-width=750} 
+-----------------------------------------------------------------------
+### Pseudocode
+
+  - Create scatterplot of data; CPI vs. HDI
+  - Add title and axis labels; italicize axis labels
+  - Scale and intervals for axes
+  - Make points circles
+  - Remove vertical background lines
+  - Rename regions to match graphic legend
+  - Color points by region
+  - Add red regression line
+  - Label one point from each country
+    - Create label set for countries
+
+### 
+<center>
+graphic
+
+```{r}
+ggplotly(graphic)
+```
+
+Column {data-width=500} 
+-----------------------------------------------------------------------
+### Data Table 
+
+```{r}
+
+library(DT)
+table <- datatable(econ_data, options = list(pageLength = 20))
+
+table
+
+```
+
+
+### Average AHD and CPI by Region 
+```{r warning=FALSE}
+data.region<- group_by(data, Region)%>%
+  dplyr::summarise(mean = mean(CPI))
+
+plt <- ggplot(data, mapping =aes(x=CPI, y=Region)) + stat_summary(geom="bar",fun=mean, color="blue", fill="red") + xlab("Mean CPI") + theme_minimal()
+
+ggplotly(plt)
+```
